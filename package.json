@@ -1,0 +1,33 @@
+{
+    "version": "1.0.0",
+    "name": "ghaith-aljabban-portfolio",
+    "scripts": {
+        "build": "next build",
+        "dev": "next dev",
+        "start": "next start"
+    },
+    "devDependencies": {
+        "@babel/generator": "^8.0.6",
+        "@babel/parser": "^8.0.8",
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "js-beautify": "^2.0.3",
+        "postcss": "^8",
+        "puppeteer-core": "^25.16.0",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5"
+    },
+    "dependencies": {
+        "@react-three/fiber": "^8.17.10",
+        "@types/three": "^0.186.0",
+        "gsap": "^3.12.5",
+        "lenis": "^1.1.18",
+        "lucide-react": "^0.453.0",
+        "next": "14.2.15",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "three": "^0.186.1"
+    },
+    "private": true
+}

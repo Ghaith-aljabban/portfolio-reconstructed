@@ -1,0 +1,430 @@
+[
+  {
+    "id": "uad",
+    "name": "Unauthorized Access Detection System",
+    "category": "Computer Vision",
+    "tagline": "A full-stack vision pipeline that recognizes faces and guards identity in real time",
+    "showcase": "camera",
+    "identityLabel": "Ghaith",
+    "similarity": "0.817",
+    "cameraId": "usb-camera",
+    "bgImage": "/projects/uad/bg-face-landmarks.png",
+    "repoUrl": "https://github.com/AIBeyonders/unauthorized_access_detection",
+    "scenes": [
+      {
+        "index": "01",
+        "eyebrow": "OVERVIEW",
+        "title": "Watches, Recognizes & Reacts — In Real Time",
+        "body": "A full-stack, vision-based access-control system: a FastAPI backend wraps the detection/recognition pipeline, a TanStack Start web dashboard gives security staff live multi-camera monitoring, and a companion Expo mobile app pushes alerts straight to a phone — all sharing one JWT-secured API contract.",
+        "tags": [
+          "Python",
+          "FastAPI",
+          "TanStack Start",
+          "React Native",
+          "PostgreSQL"
+        ],
+        "image": "/projects/uad/01-pipeline-overview.png",
+        "imageAlt": "UAD pipeline flow: cameras, preprocess, YOLOv8n, IoU tracking, SCRFD, alignment, ArcFace"
+      },
+      {
+        "index": "02",
+        "eyebrow": "THE PIPELINE",
+        "title": "Two Detectors Running in Parallel",
+        "body": "SCRFD scans every frame for faces while YOLOv8n tracks full-body positions with a custom IoU tracker — running side by side instead of one feeding the other. Overlapping face detections are collapsed with NMS and a min-area filter before anything reaches recognition.",
+        "tags": [
+          "SCRFD",
+          "YOLOv8",
+          "NMS",
+          "ONNX Runtime"
+        ],
+        "image": "/projects/uad/02-detection-nms.png",
+        "imageAlt": "Overlapping detection boxes filtered down to one via NMS + Min Filter"
+      },
+      {
+        "index": "03",
+        "eyebrow": "FACE ALIGNMENT",
+        "title": "Every Face Gets Straightened Before It's Compared",
+        "body": "SCRFD returns five facial landmarks per detection — eyes, nose, mouth corners. A similarity transform warps each crop to a canonical 112×112 frame before it ever reaches ArcFace, so a tilted head or an off-angle camera doesn't throw off the match.",
+        "tags": [
+          "SCRFD Landmarks",
+          "Similarity Transform",
+          "112×112 Crop"
+        ],
+        "image": "/projects/uad/06-face-alignment.png",
+        "imageAlt": "Rotated face mesh warped and cropped to an aligned bounding frame"
+      },
+      {
+        "index": "04",
+        "eyebrow": "ENROLLMENT",
+        "title": "One Identity, Averaged From Many Faces",
+        "body": "Enrolling someone runs a handful of their reference photos through the same SCRFD → align → ArcFace path, then averages the resulting 512-dimension vectors into one signature per identity. A live face is accepted only above a 0.817 cosine-similarity threshold against that signature.",
+        "tags": [
+          "ArcFace",
+          "512-D Embeddings",
+          "Cosine Similarity"
+        ],
+        "image": "/projects/uad/05-embedding-vector.png",
+        "imageAlt": "Three enrolled face embeddings averaged into a single 512-dimension vector array"
+      },
+      {
+        "index": "05",
+        "eyebrow": "PREVENTING TOKEN THEFT",
+        "title": "One Face Can't Borrow Another Body's Identity",
+        "body": "Faces are matched to body tracks one-to-one, only within the top zone of a person's bounding box, and an identity already claimed by another track can't be reassigned. Identified tracks are re-verified every 2 seconds so a spoofed match can't persist.",
+        "tags": [
+          "Custom Tracking",
+          "Identity Guard",
+          "Re-verification"
+        ],
+        "image": "/projects/uad/03-identity-tracking.png",
+        "imageAlt": "Two independent body tracks with track IDs, and a YOLOv8-offline face-only fallback notice"
+      },
+      {
+        "index": "06",
+        "eyebrow": "ALERTS, PERSISTED",
+        "title": "From Detection to a Persisted, Audited Alert",
+        "body": "A per-track state machine — FRESH → ACTIVE → IDENTIFIED / UNAUTHORIZED — fires an alert after 2 seconds of confirmed unauthorized presence, with a 30-second cooldown to avoid flooding. Every alert carries an encrypted snapshot, persists to Postgres + pgvector, and is written to an audit trail — exportable as CSV/PDF and pushed live over WebSocket.",
+        "tags": [
+          "PostgreSQL + pgvector",
+          "Encrypted Snapshots",
+          "Audit Trail",
+          "CSV/PDF Export"
+        ],
+        "image": "/projects/uad/04-authorized-alert.png",
+        "imageAlt": "Camera view of a recognized person tagged AUTHORIZED with ID, status and access level"
+      },
+      {
+        "index": "07",
+        "eyebrow": "SHIPPED BEYOND THE LAB",
+        "title": "A Dashboard for the Wall, an App for the Pocket",
+        "body": "The same JWT-secured API backs a TanStack Start (React 19) dashboard with live camera grids and alert-throughput charts, and an Expo/React Native app that pushes alerts straight to a guard's phone. It all ships behind Docker Compose and a Caddy reverse proxy with automatic TLS, no exposed database port, and 35 tests — 13 pipeline, 22 API — that run without a GPU.",
+        "tags": [
+          "TanStack Start",
+          "Expo",
+          "Docker Compose",
+          "Caddy TLS",
+          "35 Passing Tests"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "clinichub",
+    "name": "ClinicHub",
+    "category": "SaaS / Healthcare",
+    "tagline": "A multi-tenant booking & subscription platform for clinics and medical centers",
+    "showcase": "horizontal",
+    "repoUrl": "https://github.com/khaledkhashfeh/ClinicHub_Backend",
+    "repoLabel": "View Repo (Team Project)",
+    "scenes": [
+      {
+        "index": "01",
+        "eyebrow": "OVERVIEW",
+        "title": "One Backend, Three Kinds of Tenants",
+        "body": "A Laravel 12 API serving clinics, medical centers, and their patients from one codebase — subscription billing, appointment booking, and WhatsApp notifications behind a single JWT-protected contract.",
+        "tags": [
+          "Laravel 12",
+          "PostgreSQL",
+          "Redis",
+          "Spatie Permissions"
+        ]
+      },
+      {
+        "index": "02",
+        "eyebrow": "SESSIONS THAT SURVIVE ROTATION",
+        "title": "Refresh Tokens, Rotated on Every Use",
+        "body": "Short-lived JWT access tokens (15 min) pair with HMAC-SHA256-hashed refresh tokens that rotate on every use and chain through a replaced_by_token_hash trail — so a stolen refresh token gets caught the moment the real user refreshes next.",
+        "tags": [
+          "JWT",
+          "Token Rotation",
+          "HMAC-SHA256"
+        ]
+      },
+      {
+        "index": "03",
+        "eyebrow": "A DEVICE FOR EVERY SESSION",
+        "title": "Every Login Is a Trackable Device",
+        "body": "Each session carries a device_id, platform, FCM token, and server-resolved IP geolocation — letting a user see \"Chrome on Windows · Erbil, Iraq · 2 days ago\" and remotely terminate it, or an admin block a specific device outright.",
+        "tags": [
+          "Device Fingerprinting",
+          "IP Geolocation",
+          "Session Management"
+        ]
+      },
+      {
+        "index": "04",
+        "eyebrow": "SUBSCRIPTIONS & BILLING",
+        "title": "Plans, Entitlements & Trial Periods",
+        "body": "Clinics and medical centers subscribe to tiered plans with JSON-encoded entitlements — max patients per month, secretary seats, clinic counts — enforced per-request instead of hardcoded per plan name.",
+        "tags": [
+          "Subscription Billing",
+          "Entitlements",
+          "Multi-Tenant"
+        ]
+      },
+      {
+        "index": "05",
+        "eyebrow": "WHATSAPP, NOT JUST EMAIL",
+        "title": "Appointment Reminders Land on WhatsApp",
+        "body": "An Evolution API integration sends booking confirmations and reminders straight to a patient's WhatsApp, alongside Firebase push notifications for the native apps — because email reminders mostly go unread.",
+        "tags": [
+          "Evolution API",
+          "WhatsApp",
+          "Firebase Cloud Messaging"
+        ]
+      },
+      {
+        "index": "06",
+        "eyebrow": "DOCUMENTED FOR THE TEAM",
+        "title": "A Live Swagger Contract, Not a Stale Postman Doc",
+        "body": "Every endpoint is annotated for l5-swagger, so the OpenAPI spec regenerates straight from the code — while a hand-written Postman quick-reference in Arabic covers the common flows for the rest of the team.",
+        "tags": [
+          "OpenAPI / Swagger",
+          "l5-swagger",
+          "API Docs"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ecommerce",
+    "name": "Load-Tested Commerce Engine",
+    "category": "Systems Engineering",
+    "tagline": "A NestJS commerce backend built to survive load, not just pass a demo",
+    "showcase": "stack",
+    "repoUrls": [
+      {
+        "label": "Backend",
+        "href": "https://github.com/Mo-Ha-0/e-commerce_backend"
+      },
+      {
+        "label": "Frontend",
+        "href": "https://github.com/Mo-Ha-0/e-commerce-frontend"
+      }
+    ],
+    "scenes": [
+      {
+        "index": "01",
+        "eyebrow": "OVERVIEW",
+        "title": "Built to Get Load-Tested, Not Just Demoed",
+        "body": "A NestJS + PostgreSQL commerce backend with a k6 test suite covering eight named non-functional requirements — race conditions, rate limits, async queues, batch jobs, load distribution — run against the real Docker Compose stack, not mocks.",
+        "tags": [
+          "NestJS",
+          "TypeORM",
+          "PostgreSQL",
+          "k6"
+        ]
+      },
+      {
+        "index": "02",
+        "eyebrow": "ONE ITEM, FIFTY BUYERS",
+        "title": "50 Concurrent Buyers, Exactly One Order",
+        "body": "NFR-1 spins up 50 virtual users who all try to buy the last unit of the same product at once. A pessimistic lock at the database layer guarantees exactly one order succeeds and zero requests 500 — verified automatically, not just claimed.",
+        "tags": [
+          "Race Conditions",
+          "Pessimistic Locking",
+          "50 VUs → 1 Order"
+        ]
+      },
+      {
+        "index": "03",
+        "eyebrow": "QUEUES, NOT BLOCKING REQUESTS",
+        "title": "Emails and PDFs Happen Off the Request Path",
+        "body": "BullMQ + Redis move invoice generation (PDFKit) and order-confirmation emails (Nodemailer) into background jobs, so a checkout request returns fast instead of waiting on a mail server or a PDF renderer.",
+        "tags": [
+          "BullMQ",
+          "Redis",
+          "PDFKit",
+          "Nodemailer"
+        ]
+      },
+      {
+        "index": "04",
+        "eyebrow": "WATCHED, NOT JUST LOGGED",
+        "title": "Prometheus Metrics, Structured Logs, Health Checks",
+        "body": "prom-client exposes request-level metrics for Prometheus/Grafana, Winston writes daily-rotated structured logs, and a dedicated health module reports readiness — the observability stack you'd actually want on call for this.",
+        "tags": [
+          "Prometheus",
+          "Grafana",
+          "Winston",
+          "Health Checks"
+        ]
+      },
+      {
+        "index": "05",
+        "eyebrow": "A HOMEGROWN AUTOSCALER",
+        "title": "It Watches Its Own Containers and Scales Itself",
+        "body": "A small Node script polls docker stats every 15 seconds and scales the app service between 3 and 8 replicas behind nginx based on live CPU/RAM thresholds — with a cooldown so it doesn't thrash under bursty traffic.",
+        "tags": [
+          "Docker Compose",
+          "nginx",
+          "3 → 8 Replicas"
+        ]
+      },
+      {
+        "index": "06",
+        "eyebrow": "A REACT FRONT DOOR",
+        "title": "React 19, TanStack Query & Zod on the Client",
+        "body": "The storefront is a separate React 19 + TypeScript app: TanStack Query for server state, React Hook Form + Zod for validated checkout forms, and Axios wired to the same JWT contract the backend's k6 suite tests against.",
+        "tags": [
+          "React 19",
+          "TanStack Query",
+          "React Hook Form",
+          "Zod"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mininn",
+    "name": "MiniNN",
+    "category": "Machine Learning",
+    "tagline": "A neural network library built from raw NumPy, no autograd framework underneath",
+    "showcase": "terminal",
+    "promptLabel": "mininn",
+    "scenes": [
+      {
+        "index": "01",
+        "eyebrow": "OVERVIEW",
+        "title": "Backprop, Written by Hand",
+        "body": "MiniNN is a from-scratch neural network library in pure NumPy. Every forward pass, gradient, and optimizer update is code I wrote, not a call into PyTorch or TensorFlow.",
+        "tags": [
+          "Python",
+          "NumPy",
+          "No Autograd"
+        ]
+      },
+      {
+        "index": "02",
+        "eyebrow": "THE LAYERS",
+        "title": "Dense, Dropout, and Batch Norm — All Hand-Derived",
+        "body": "Dense layers use He/Xavier initialization. BatchNormalization tracks running statistics for inference. Dropout, ReLU, Sigmoid, Tanh, and Softmax Cross-Entropy round out a small but complete layer library.",
+        "tags": [
+          "Dense",
+          "BatchNorm",
+          "Dropout",
+          "Softmax Cross-Entropy"
+        ]
+      },
+      {
+        "index": "03",
+        "eyebrow": "FOUR OPTIMIZERS, ONE INTERFACE",
+        "title": "SGD, Momentum, AdaGrad, and Adam",
+        "body": "Each optimizer tracks per-parameter state keyed by Python's id(), so the same parameter tensor is recognized correctly across layers even when two layers happen to share a name.",
+        "tags": [
+          "SGD",
+          "Momentum",
+          "AdaGrad",
+          "Adam"
+        ]
+      },
+      {
+        "index": "04",
+        "eyebrow": "A REAL TRAINING LOOP",
+        "title": "Mini-Batches, Validation Metrics, Grid Search",
+        "body": "A Trainer class handles mini-batch gradient descent with train/validation tracking, and a HyperparameterTuner runs grid search over learning rates and layer sizes — the scaffolding every deep learning framework needs underneath the math.",
+        "tags": [
+          "Mini-Batch SGD",
+          "Validation Tracking",
+          "Grid Search"
+        ]
+      },
+      {
+        "index": "05",
+        "eyebrow": "PROVEN ON MNIST",
+        "title": "784 → 256 → 128 → 10, No Shortcuts",
+        "body": "The same library trains a 2D toy classifier, the Iris dataset, and a batch-normalized MNIST digit classifier — the exact numbers a framework needs to get right to be trustworthy, not just one cherry-picked demo.",
+        "tags": [
+          "MNIST",
+          "Iris Dataset",
+          "scikit-learn"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "school",
+    "name": "School Management System",
+    "category": "Full-Stack / Education",
+    "tagline": "A REST API for running an entire school's day-to-day operations",
+    "showcase": "sidebar",
+    "repoUrl": "https://github.com/Mo-Ha-0/school-back-end",
+    "scenes": [
+      {
+        "index": "01",
+        "eyebrow": "OVERVIEW",
+        "title": "Every Part of Running a School, One API",
+        "body": "An Express + PostgreSQL backend covering students, teachers, classes, exams, attendance, tuition, and notifications — over 30 controllers, models, and services deep, backed by 37 versioned migrations.",
+        "tags": [
+          "Express.js",
+          "PostgreSQL",
+          "Knex.js"
+        ]
+      },
+      {
+        "index": "02",
+        "eyebrow": "ACADEMIC STRUCTURE",
+        "title": "Years, Semesters, Subjects, Curricula",
+        "body": "Academic years contain semesters, semesters map to curricula, and curricula assign subjects to classes — a real hierarchy, not a flat \"course\" table, so a student's schedule resolves correctly across years.",
+        "tags": [
+          "Academic Years",
+          "Curricula",
+          "Class Scheduling"
+        ]
+      },
+      {
+        "index": "03",
+        "eyebrow": "EXAMS, GRADED END TO END",
+        "title": "Questions, Attempts, Answers, Grades",
+        "body": "Exams are built from a question bank, students submit exam_attempts, individual answers are recorded and graded, and the result rolls up into the student's academic record automatically.",
+        "tags": [
+          "Question Bank",
+          "Exam Attempts",
+          "Auto-Grading"
+        ]
+      },
+      {
+        "index": "04",
+        "eyebrow": "ATTENDANCE, TWO AUDIENCES",
+        "title": "Two Attendance Systems, One Pattern",
+        "body": "Students and employees are tracked through separate attendance tables with the same reporting shape, so the same dashboards and export logic serve both without special-casing.",
+        "tags": [
+          "Attendance Tracking",
+          "Reporting"
+        ]
+      },
+      {
+        "index": "05",
+        "eyebrow": "TUITION, TRACKED PER STUDENT",
+        "title": "Payments That Actually Reconcile",
+        "body": "Tuition payments are tracked per student with status transitions, so office staff can see who's paid, who's overdue, and export the numbers without cross-referencing a spreadsheet.",
+        "tags": [
+          "Tuition Payments",
+          "Financial Tracking"
+        ]
+      },
+      {
+        "index": "06",
+        "eyebrow": "BULK IMPORT",
+        "title": "An Excel Sheet Becomes 200 Student Records",
+        "body": "xlsx-powered bulk upload lets office staff import a whole class roster from a spreadsheet in one request, instead of typing every student in by hand.",
+        "tags": [
+          "xlsx Bulk Import",
+          "multer",
+          "Data Validation"
+        ]
+      },
+      {
+        "index": "07",
+        "eyebrow": "ROLE-AWARE NOTIFICATIONS",
+        "title": "The Right Notification to the Right Role",
+        "body": "Firebase Cloud Messaging tokens are tied to roles and permissions, so a grade update notifies a parent, an attendance flag notifies a homeroom teacher, and neither gets the other's noise.",
+        "tags": [
+          "Firebase FCM",
+          "RBAC",
+          "Role-Based Notifications"
+        ]
+      }
+    ]
+  }
+]
